@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dashboard dos dentes</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Figtree:wght@400;600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="intro" role="dialog" aria-label="Boas-vindas">
+  <canvas id="tc" width="400" height="400" aria-hidden="true"></canvas>
+  <div class="txt">
+    <h2 class="num">Seja Bem Vindo</h2>
+    <p class="nm num">Felipe Moura</p>
+    <p class="lbl" id="dataHoje"></p>
+    <button class="btn" id="go" type="button">Entrar no painel</button>
+  </div>
+</div>
+<main>
+<header>
+  <h1 id="ttl" style="cursor:pointer" title="Voltar à abertura">🦷 Dashboard dos dentes</h1>
+  <div class="ctl">
+    <input type="month" id="mes" aria-label="Mês">
+    <div class="seg" role="group" aria-label="Período">
+      <button data-h="1" aria-pressed="true">Dia 1 ao 15</button>
+      <button data-h="2" aria-pressed="false">Dia 16 ao fim</button>
+      <button data-h="0" aria-pressed="false">Mês todo</button>
+    </div>
+  </div>
+</header>
+<div class="alert" id="alert" hidden></div>
+
+<section class="card" style="margin-bottom:16px">
+  <div class="sh"><h2>Clientes</h2>
+    <div class="ctl"><input id="nc" placeholder="Novo cliente" aria-label="Novo cliente"><button class="ghost" id="ncb" type="button">Adicionar cliente</button><button class="ghost" id="all" type="button">Ver todos</button></div>
+  </div>
+  <div class="cgrid" id="clients"></div>
+</section>
+
+<section class="hero">
+  <div class="top">
+    <div><div class="lbl" id="heroLbl">Total do período</div><div class="big num" id="kTotal">R$ 0</div></div>
+    <div class="lbl" id="archInfo"></div>
+  </div>
+  <div class="arch" id="arch" aria-hidden="true"></div>
+  <p><button class="btn" id="genrep" type="button">Gerar relatório</button> <span class="lbl" id="gm"></span></p>
+</section>
+
+<section class="kpis">
+  <div class="kpi"><span class="lbl">Dentes desenhados</span><b id="kDentes">0</b></div>
+  <div class="kpi"><span class="lbl">Pacientes</span><b id="kPac">0</b></div>
+  <div class="kpi"><span class="lbl">Clientes</span><b id="kDr">0</b></div>
+  <div class="kpi"><span class="lbl">Ticket médio por paciente</span><b id="kMed">R$ 0</b></div>
+  <div class="kpi"><span class="lbl">A receber (pendente)</span><b id="kPend">R$ 0</b></div>
+</section>
+
+<div class="cols">
+  <section class="card">
+    <h2>Novo registro</h2>
+    <form id="f">
+      <label>Cliente<input id="dr" list="drs" required placeholder="Dr. Illan Hadson"><datalist id="drs"></datalist></label>
+      <label>Paciente<input id="pac" required></label>
+      <label>Dentes desenhados<input id="desc" required placeholder="Protocolo 16 a 26"></label>
+      <label>Tipo de trabalho<select id="tp"></select></label>
+      <div class="row2">
+        <label>Quantidade<input id="qtd" type="number" min="1" value="1" required></label>
+        <label>Valor por dente (R$)<input id="vl" type="number" min="0" step="0.5" value="20" required></label>
+      </div>
+      <div class="row2">
+        <label>Pagamento<select id="pg"><option value="0">Pendente</option><option value="1">Pago</option></select></label>
+        <label>Entrega até<input id="pz" type="date"></label>
+      </div>
+      <label>Data<input id="dt" type="date" required></label>
+      <label>Observações<textarea id="obs" placeholder="Cor, material, prazo, detalhes do caso…"></textarea></label>
+      <div class="tot" id="prev">Total: R$ 20,00</div>
+      <button class="btn" type="button" id="add">Adicionar</button>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>Registros do período</h2>
+    <input id="q" type="search" placeholder="Buscar por cliente, paciente, dentes ou observação" aria-label="Buscar">
+    <div class="scroll"><table>
+      <thead><tr><th>Cliente</th><th>Paciente</th><th>Dentes desenhados</th><th class="n">Qtd</th><th class="n">Valor</th><th class="n">Total</th><th>Status</th><th></th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table></div>
+    <div class="empty" id="empty" hidden>Nenhum registro neste período. Adicione o primeiro ao lado.</div>
+    <p><button class="ghost" id="clr" type="button">Apagar todos os registros</button></p>
+  </section>
+</div>
+
+<section class="card notes"><h2>Faturamento mensal</h2><div class="mbars" id="mb"></div></section>
+<section class="card notes"><h2 id="plTitle">Tabela de preços</h2><div id="pl"></div>
+  <div class="row2"><input id="pn" placeholder="Tipo (ex.: Coroa)" aria-label="Tipo"><input id="pv" type="number" min="0" step="0.5" placeholder="Valor por dente" aria-label="Valor"></div>
+  <p><button class="btn" id="pa" type="button">Salvar tipo</button></p></section>
+<section class="card notes">
+  <h2 id="ntTitle">Anotações</h2>
+  <textarea id="notas" placeholder="Lembretes, pendências, combinados…"></textarea>
+  <p><button class="btn" id="cp" type="button">Copiar resumo do período</button></p>
+</section>
+<section class="card notes"><h2>Backup dos dados</h2>
+  <p class="lbl">Os dados ficam só neste navegador. Guarde uma cópia de vez em quando.</p>
+  <p><button class="btn" id="bd" type="button">Baixar arquivo</button> <button class="ghost" id="bc" type="button">Copiar backup</button></p>
+  <p class="lbl">Restaurar: escolha o arquivo ou cole o texto<br><input id="bf" type="file" accept=".json,application/json"></p>
+  <textarea id="bk" placeholder="Cole aqui o backup"></textarea>
+  <p><button class="ghost" id="br" type="button">Restaurar backup</button> <span class="lbl" id="bm"></span></p>
+</section>
+</main>
+<div id="rep" hidden>
+  <div class="rbar norp"><button class="btn" id="rprint" type="button">Imprimir ou salvar em PDF</button> <button class="ghost" id="rcopy" type="button">Copiar texto</button> <button class="ghost" id="rclose" type="button">Fechar</button></div>
+  <div id="rbody"></div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
